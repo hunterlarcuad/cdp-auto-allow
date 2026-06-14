@@ -19,7 +19,7 @@ macOS 后台工具：自动点击 Chrome DevTools Protocol 远程调试确认弹
 ## 安装
 
 ```bash
-git clone https://github.com/your-username/cdp-auto-allow.git
+git clone https://github.com/hunterlarcuad/cdp-auto-allow.git
 cd cdp-auto-allow
 chmod +x scripts/install.sh scripts/uninstall.sh
 ./scripts/install.sh
