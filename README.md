@@ -42,7 +42,12 @@ chmod +x scripts/install.sh scripts/uninstall.sh
 }
 ```
 
-修改配置**不需要重新编译**，下次 idle 循环自动生效。
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `pollInterval` | number | 3 | 扫描间隔（秒）。检测到弹窗后约 0.4~`pollInterval` 秒内自动点击。越大越省 CPU，但响应越慢 |
+| `maxLogDays` | number | 7 | 日志保留天数。`/tmp/cdp-auto-allow/` 下的日志文件超过此天数自动删除 |
+
+修改配置**不需要重新编译**，下次 idle 循环自动生效。首次安装时从 `config.example.json` 复制，之后修改不会覆盖已有配置。
 
 ## 日志
 
