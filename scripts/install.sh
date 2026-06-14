@@ -8,7 +8,7 @@ PLIST_SRC="$ROOT_DIR/launchd/com.local.cdp-auto-allow.plist"
 PLIST_DST="$HOME/Library/LaunchAgents/com.local.cdp-auto-allow.plist"
 BUNDLE_ID="com.local.CDPAutoAllow"
 PLIST_BUDDY="/usr/libexec/PlistBuddy"
-CONFIG_SRC="$ROOT_DIR/config.json"
+CONFIG_SRC="$ROOT_DIR/config.example.json"
 CONFIG_DST="$HOME/.config/cdp-auto-allow/config.json"
 
 SCPT_HASH=$(md5 -q "$SCPT_SRC" 2>/dev/null || md5sum "$SCPT_SRC" | cut -d' ' -f1)
