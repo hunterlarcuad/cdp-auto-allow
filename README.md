@@ -65,6 +65,17 @@ launchctl list com.local.cdp-auto-allow
 osascript scripts/cdp-auto-allow.scpt --dry-run
 ```
 
+成功自动点击时，日志通常会出现：
+
+```text
+Google Chrome PID=... sheets=1
+Matched Chrome CDP/DevTools prompt
+Clicking allow button: 允许
+Approved Chrome CDP/DevTools prompt
+```
+
+如果只看到 `windows=...`，但没有 `sheets=1`，表示当前扫描到的 Chrome 窗口里没有远程调试确认 sheet。
+
 ## 卸载
 
 ```bash
@@ -96,6 +107,35 @@ Chrome 149+ 在 macOS 上**不再响应** `--remote-debugging-port` 命令行参
 - Accessibility 权限基于代码签名 hash 绑定
 - 每次重新编译 `.app` bundle，签名变化，TCC 授权失效
 - 因此**配置外置到 `config.json`**，避免频繁重新签名
+- 重新授权后，如果日志仍出现 `“CDP Auto Allow”不允许辅助访问`，结束旧 applet 进程，让 launchd 拉起新实例：
+  ```bash
+  pkill -f "$(pwd)/CDP Auto Allow.app/Contents/MacOS/applet"
+  ```
+
+### Chrome 149 中文确认弹窗
+
+Chrome 149 在中文系统中会把远程调试确认框暴露为当前窗口的 `AXSheet`：
+
+```text
+AXSheet name=要允许远程调试吗？
+AXStaticText: 一款外部应用请求完全控制此 Chrome 会话...
+AXButton desc=取消
+AXButton desc=允许
+```
+
+脚本会优先扫描 `sheet`，匹配中文/英文远程调试文案，并通过按钮的 `name`、`description` 或 `value` 查找 `Allow` / `允许`。
+
+### 为什么不深扫普通浏览器窗口
+
+普通 Chrome / Chromium 页面可能暴露很大的 Accessibility UI 树，例如标签页、扩展、网页内容、通知页等。完整递归扫描这些窗口会导致一轮扫描耗时十几秒甚至更久，远程调试弹窗会因此迟迟得不到处理。
+
+当前策略只扫描：
+
+- Chrome / Chromium 窗口上的 `sheet`
+- 小型 `AXUnknown` 对话框
+- 未命名且包含 Cancel/Allow 按钮的窗口
+
+这能避免卡在普通网页 UI 树里，同时覆盖 Chrome CDP 远程调试确认框。
 
 ### 为什么不用裸 osascript
 
